@@ -17,3 +17,12 @@ if (Meteor.isServer) {
 
 }
 
+// ServiceConfiguration.configurations.remove({
+//   service: "facebook"
+// });
+
+// ServiceConfiguration.configurations.insert({
+//   service: "facebook",
+//   appId: "311391665715533",
+//   secret: "76c0d1014c482561c6366d4c006f59c4"
+// });
