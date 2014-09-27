@@ -21,14 +21,14 @@ Template.ShoppingList.rendered = function () {
         pageSize: 6,
         responseFormat: 'json',
         searchTerm: text,
-        key: 'J5PsS2XGuqCnkdQq0Let6RSfvU7oyPwF',
-        storeId: 'T1211'
+        key: 'J5PsS2XGuqCnkdQq0Let6RSfvU7oyPwF'
       },
       success: function (result, status, xhr) {
         var rawResults = result['CatalogEntryView'];
         var newList = rawResults.map(function (x, i, arr) {
           return {
             partNumber: x.partNumber,
+            productCode: x.DPCI,
             title: x.ItemAttributes[0].Attribute[0].description
           };
         })
@@ -41,13 +41,14 @@ Template.ShoppingList.rendered = function () {
     });
   }
 
-  function onClickItem (partNumber, name) {
+  function onClickItem (partNumber, productCode, name) {
     return function () {
       var list = ShoppingLists.findOne({index: listIndex});
       Items.insert({
         shopping_list_id: list._id,
         status: 'need',
         part_number: partNumber,
+        product_code: productCode,
         name: name
       });
     }
@@ -58,7 +59,13 @@ Template.ShoppingList.rendered = function () {
       $('.search-results li').remove();
       for (var i = 0; i < listOfResults.length; i++) {
         var searchResult = $('<li>' + listOfResults[i]['title'] + '</li>');
-        $(searchResult).click(onClickItem(listOfResults[i]['partNumber'], listOfResults[i]['title']));
+        $(searchResult).click(
+          onClickItem(
+            listOfResults[i]['partNumber'],
+            listOfResults[i]['productCode'],
+            listOfResults[i]['title']
+          )
+        );
         $('#search-wrapper .search-results').append(searchResult);
       };
     }
