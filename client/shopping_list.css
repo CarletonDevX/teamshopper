@@ -144,6 +144,9 @@
   background: url('plus-icon2.png') no-repeat scroll 50% #555;
   background-size: 36px;
 }
+.addFriend.sidebarOpen {
+  background-image: url('minus-icon.png');
+}
 
 /* Search */
 #search-wrapper {
@@ -167,6 +170,7 @@
   left: 0;
   width: 100%;
   position: absolute;
+  z-index: 100000;
 }
 .shoppingList .search-results li {
   margin: 0 auto;
@@ -187,6 +191,7 @@
   border-bottom: 1px solid rgb(119, 119, 119);
   border-bottom: 0;
   color: #444;
+  background: #fff;
   /*position: relative;*/
 }
 .shoppingList li:last-of-type {
@@ -205,3 +210,41 @@
   background-size: 70%;
 }
 */
+
+.shoppingList .handle {
+  width: 99.5%;
+  text-align: center;
+  line-height: 65px;
+}
+
+
+
+
+/*sketch*/
+.handle {
+  height: 100%;
+}
+.plus-button,
+.minus-button {
+  position: absolute;
+  display: inline-block;
+  width: 520px;
+  height: 100%;
+}
+
+.minus-button {
+  background: url('/white_minus.png') no-repeat scroll 92.5% 50% / 30px #F00;
+}
+.plus-button {
+  background: url('/white_plus.png') no-repeat scroll 7.5% 50% / 30px auto #008000;
+}
+.minus-button {
+  left: -535px;
+}
+.plus-button {
+  right: -535px;
+}
+
+.wrapper {
+  background: black;
+}

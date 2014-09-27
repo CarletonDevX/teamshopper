@@ -113,6 +113,10 @@ Template.GoShopping.rendered = function () {
 
   function shoveToDOM (el) {
     return function (listOfResults) {
+      $('.spinner').fadeOut(600);
+      Meteor.setTimeout(function () {
+        $('.spinner').remove();
+      }, 700);
       console.dir(listOfResults);
       $('.search-results li').remove();
       for (var i = 0; i < listOfResults.length; i++) {
@@ -136,6 +140,10 @@ Template.GoShopping.rendered = function () {
       $('#search-wrapper').append(resultsList);
     } else {
       resultsList = resultsList[0];
+    }
+    if ($('.spinner').length === 0) {
+      var spinner = new Spinner({color: "#333"}).spin();
+      document.getElementById('search-wrapper').appendChild(spinner.el);
     }
     getTarget($('#search-bar').val(), shoveToDOM(resultsList));
   }));

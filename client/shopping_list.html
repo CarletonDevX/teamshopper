@@ -37,10 +37,7 @@
       </div>
       <ul id="items-to-buy">
         {{#each items}}
-        <li data-objid="{{_id}}">
-          <a class="up">&#8598;</a> <a class="down">&#8601;</a>
-          {{count}} &times; {{name}} : ${{price}} each
-        </li>
+        {{> ShoppingListItem}}
         {{/each}}
       </ul>
     </div>
@@ -55,6 +52,19 @@
   </div>
   {{/if}}
 
+</template>
+
+<template name="ShoppingListItem">
+  <li class="dragdealer" id="drag{{_id}}" data-objid="{{_id}}">
+    <div class="handle">
+      <div class="minus-button">
+      </div>
+      <a class="up">&#8598;</a> <a class="down">&#8601;</a>
+      {{count}} &times; {{name}} : ${{price}} each
+      <div class="plus-button">
+      </div>
+    </div>
+  </li>
 </template>
 
 <template name="FriendInSidebar"><li><img src="{{pic}}"><span class="friend-name">{{name}}</span></li></template>

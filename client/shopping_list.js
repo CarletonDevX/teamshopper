@@ -110,7 +110,14 @@ Template.ShoppingList.rendered = function () {
         select.name = name;
         select.count = 1;
         select.price = price;
-        Items.insert(select);
+        var itemId = Items.insert(select);
+        Meteor.setTimeout(function () {
+          $('.dragdealer').each(function () {
+            new Dragdealer("drag" + itemId, {
+              loose: true
+            });
+          });
+        });
       }
     }
   }
@@ -149,19 +156,20 @@ Template.ShoppingList.rendered = function () {
 
 Template.ShoppingList.events({
   'click #items-to-buy .up': function () {
-    var id = $(this)[0]._id;
-    Items.update({_id: id}, {$inc: {count: 1}});
+    var id = this._id;
+    Items.update(id, {$inc: {count: 1}});
   },
   'click #items-to-buy .down': function () {
-    var id = $(this)[0]._id;
-    Items.update({_id: id}, {$inc: {count: -1}});
-    if (Items.findOne({_id: id}).count === 0) {
-      Items.remove({_id: id});
+    var id = this._id;
+    Items.update(id, {$inc: {count: -1}});
+    if (Items.findOne(id).count === 0) {
+      Items.remove(id);
     };
   },
   'click .addFriend': function () {
     $('.shoppingListContent').toggleClass('sidebarOpen');
     $('.friendsSidebar').toggleClass('sidebarOpen');
+    $('.addFriend').toggleClass('sidebarOpen');
   },
   'focus .js-list-title-input': function () {
     var titleDisplay = $('.js-list-title-display');
@@ -187,6 +195,20 @@ Template.ShoppingList.events({
   },
   'blur #search-bar': function () {
     $('.footer').show();
+  }
+});
+
+Template.ShoppingListItem.rendered = function () {
+  $('.dragdealer').each(function () {
+    new Dragdealer($(this).attr('id'), {
+      loose: true
+    });
+  });
+};
+
+Template.ShoppingListItem.events({
+  'mouseup': function () {
+    console.log(this);
   }
 });
 
