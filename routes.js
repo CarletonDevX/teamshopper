@@ -4,7 +4,7 @@ Router.configure({
   notFoundTempalte: 'NotFound',
   load: function () {
     $('html, body').animate({ scrollTop: 0 }, 400);
-    $('.content').hide().fadeIn(1000);
+    $('.content').hide().fadeIn(500);
   }
 });
 

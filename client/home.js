@@ -13,5 +13,7 @@ Template.Home.events({
       title: "New list " + index,
       user_ids: [Meteor.user()._id]
     });
+    $('html, body').animate({scrollTop: $('.js-submit').position().top-$(window).height()+$('.js-submit').height()+56}, 400);
+    // $('.js-submit').css('top', '-110px').animate({top: '0'}, 500, 'easeOut');
   }
 });
