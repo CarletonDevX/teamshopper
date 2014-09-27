@@ -1,4 +1,17 @@
 
+// First, checks if it isn't implemented yet.
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
+
 targetAPI = {
   devId: "f10aa86b665e6385fda70e39e6725db5",
   apiKey: "03564f3d3ef34107e73e1c1ec5b775d3",
@@ -29,25 +42,33 @@ targetAPI = {
   },
 
   request: function(url, method, data, cb){
-    $.ajax({
+    console.log(url);
+    console.log(data);
+    var config = {
       url: url,
       data: data,
       success: cb,
-      error: cb,
+      // error: cb,
       type: method
-    });
+    };
+
+    epicConfig = config;
+
+    console.log(config);
+
+    return $.ajax(config);
   },
 
   searchNearby: function(lat,lng,cb){
-    return this.request("http://api.target.com:80/v2/store?nearby=%d,%d&range=30&key=%s".format(lat,lng,this.key), "GET", {}, cb);
+    return this.request("http://api.target.com:80/v2/store?nearby={0},{1}&range=30&key={2}".format(lat,lng,this.key), "GET", {}, cb);
   },
 
   individualStore: function(storeId, cb) {
-    return this.request("http://api.target.com/v2/location/%d?key=%s".format(storeId,this.key), "GET", {}, cb);
+    return this.request("http://api.target.com/v2/location/{0}?key={1}".format(storeId,this.key), "GET", {}, cb);
   },
 
   storePromos: function(storeId, cb) {
-    return this.request("http://api.target.com:80/v1/promotions/weeklyad/storeslugs?storeref=%d&key=%s".format(storeId,this.key), "GET", {}, cb);
+    return this.request("http://api.target.com:80/v1/promotions/weeklyad/storeslugs?storeref={0}&key={1}".format(storeId,this.key), "GET", {}, cb);
   },
 
   productIdsToObj: function(productIds) {
@@ -56,7 +77,7 @@ targetAPI = {
   },
 
   productSearch: function(storeId, query, cb) {
-    return this.request("http://www.tgtappdata.com/v1/gen2spec/search/outside/%d/%s".format(storeId,query.replace(" ", "+")), "GET", {}, cb);
+    return this.request("http://www.tgtappdata.com/v1/gen2spec/search/outside/{0}/{1}".format(storeId,query.replace(" ", "+")), "GET", {}, cb);
   },
 
   compareRoutes: function(route1, route2) {
@@ -126,18 +147,19 @@ targetAPI = {
   },
 
   getMapForProductsAtStore: function(productIds, storeId, cb) {
+    var self = this;
     return this.request(
-      "http://api.target.pointinside.com:80/search/v1.1/product/lookup?devId=%s&storeId=%d&apiKey=%s".format(this.devId,storeId,this.apiKey),
+      "http://api.target.pointinside.com:80/search/v1.1/product/lookup?devId={0}&storeId={1}&apiKey={2}".format(this.devId,storeId,this.apiKey),
       "POST", 
-      this.projectIdsToObj(productIds), 
+      self.productIdsToObj(productIds), 
       function(result) {
         var venueId = result.results[0].product.locations[0].venue;
         var coordinatePairs = result.results.map(function(item){
           return [item.product.locations[0].x, item.product.locations[0].y];
         });
 
-        this.request(
-          "http://api.target.pointinside.com/feeds/maps/v1.1/venues/%s/zoneImages?devId=%s&apiKey=%s".format(venueId,this.devId,this.apiKey), 
+        self.request(
+          "http://api.target.pointinside.com/feeds/maps/v1.1/venues/{0}/zoneImages?devId={1}&apiKey={2}".format(venueId,this.devId,this.apiKey), 
           "GET", 
           {}, 
           function(result){
@@ -154,34 +176,36 @@ targetAPI = {
             var imageUrl = svgItem.imageUrl;
 
             cb(imageUrl, coordinatePairsAdjusted);
-        });
-    });
+          });
+      });
   },
 
   addMapToElement: function(elementToAppendTo, productIds, storeId, cb) {
     return this.getMapForProductsAtStore(productIds, storeId, function(
       imageUrl, 
       coordinatePairsAdjusted){
-      return this.request(imageUrl+"?apiKey=%s&devId=%s".formate(this.apiKey,this.devId), "GET", {}, function(result) {
+      return this.request(imageUrl+"?apiKey={0}&devId={1}".formate(this.apiKey,this.devId), "GET", {}, function(result) {
         elementToAppendTo.append(result);
         /// find svg element and add circles
         var svg = $('svg',elementToAppendTo);
-        var circle = '<circle xmlns="http://www.w3.org/2000/svg" cx="%d" cy="%d" fill="#00FF00" r="10"/>'; 
+        var circle = '<circle xmlns="http://www.w3.org/2000/svg" cx="{0}" cy="{1}" fill="#00FF00" r="10"/>'; 
         for(var pair in coordinatePairsAdjusted) {
           svg.append(circle.format(pair[0],pair[1]));
         }
 
-        return this.findPath(coordinatePairsAdjusted, function(shortestPath){
-          var line = '<line x1="%d" y1="%d" x2="%d" y2="%d" style="stroke:rgb(255,0,0);stroke-width:2" />';
+        this.findPath(coordinatePairsAdjusted, function(shortestPath){
+          var line = '<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" style="stroke:rgb(255,0,0);stroke-width:2" />';
 
           for (var i = 0; i <= shortestPath.length - 2; i++) {
             var currentPoint = shortestPath[i];
             var nextPoint = shortestPath[i+1];
 
             svg.append(line.format(currentPoint[0], currentPoint[1], nextPoint[0], nextPoint[1]));
-            return cb(elementToAppendTo);
+            
           }
         });
+
+        return cb(svg);
       });
     });
   }
