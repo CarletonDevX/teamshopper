@@ -1,8 +1,9 @@
-Template.ShoppingList.inputField = 'js-input';
-Template.ShoppingList.inputSubmit = 'js-submit';
-
 var getCurrentList = function () {
   return ShoppingLists.findOne(Session.get('listId'));
+}
+
+Template.ShoppingList.title = function () {
+  return (getCurrentList() || {'title': ''}).title;
 }
 
 Template.ShoppingList.items = function () {

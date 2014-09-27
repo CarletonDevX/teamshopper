@@ -52,6 +52,14 @@ Router.map(function () {
     }
   });
 
+  this.route('GoShopping', {
+    path: '/goshop/:_id',
+    onBeforeAction: redirectIfNotLoggedIn,
+    data: function () {
+      return { id: this.params._id };
+    }
+  });
+
   this.route('PostItem', {
     action: function () {
       debugger
