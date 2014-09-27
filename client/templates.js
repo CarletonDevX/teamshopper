@@ -1,3 +1,7 @@
+Template.Home.shoppingLists = function () {
+  return ShoppingLists.find();
+}
+
 var shoppingListInput = "shopping_list_input";
 var shoppingListSubmit = "shopping_list_submit";
 Template.ShoppingList.inputField = shoppingListInput;

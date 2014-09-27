@@ -4,9 +4,11 @@ Router.configure({
 
 Router.map(function () {
 
-  this.route('Home', {
+  this.route('Login', {
     path: '/'
   });
+
+  this.route('Home');
 
   this.route('ShoppingList', {
     path: '/list'
