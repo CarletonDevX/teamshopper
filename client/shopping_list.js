@@ -14,19 +14,11 @@ Template.ShoppingList.addedFriends = function () {
   return Session.get('friends');
 }
 
-var friendsFound = false;
-var acquireFriends = function () {
-  if (!friendsFound) {
-    console.log("try to find friends");
-    // getFriends(function (friends) {
-    //   friendsFound = true;
-    //   alert('got friends');
-    //   console.log(friends);
-    //   Session.set('friends', friends);
-    // });
-  }
-  Meteor.setTimeout(acquireFriends, 2000);
-}
+MeteorFB.onReady(function () {
+  MeteorFB.getFriends(function (friends) {
+    Session.set('friends', friends);
+  });
+});
 
 Template.ShoppingList.rendered = function () {
 
@@ -125,8 +117,6 @@ Template.ShoppingList.rendered = function () {
     }
     getTarget($('#search-bar').val(), shoveToDOM(resultsList));
   }));
-
-  acquireFriends();
 
 };
 

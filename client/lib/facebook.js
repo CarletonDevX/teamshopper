@@ -4,6 +4,7 @@ window.fbAsyncInit = function() {
     xfbml      : true,
     version    : 'v2.1'
   });
+  MeteorFB.ready();
 };
 
 (function(d, s, id){
@@ -14,20 +15,46 @@ window.fbAsyncInit = function() {
    fjs.parentNode.insertBefore(js, fjs);
  }(document, 'script', 'facebook-jssdk'));
 
-getFriends = function (callback) {
+var readyCallback;
 
-  var picUrlFromId = function (userId) {
-    return "http://graph.facebook.com/" + userId + "/picture?type=normal&width=100&height=100";
-  }
+MeteorFB = {
 
-  var accessToken = Meteor.user().services.facebook.accessToken;
-  FB.api("/me/friends?access_token=" + accessToken, function (r) {
-    var friends = r.data.map(function(friend) {
-      return {
-        name: friend.name,
-        pic: picUrlFromId(friend.id)
+  ready: function () {
+    if (readyCallback) {
+      readyCallback();
+    }
+  },
+
+  onReady: function (callback) {
+    readyCallback = callback;
+  },
+
+  getFriends: function (callback) {
+
+    var picUrlFromId = function (userId) {
+      return "http://graph.facebook.com/" + userId + "/picture?type=normal&width=100&height=100";
+    };
+
+    var getFriendData = function () {
+      var accessToken = Meteor.user().services.facebook.accessToken;
+      FB.api("/me/friends?access_token=" + accessToken, function (r) {
+        var friends = r.data.map(function(friend) {
+          return {
+            name: friend.name,
+            pic: picUrlFromId(friend.id)
+          }
+        });
+        callback(friends);
+      });
+    }
+    var tryGetFriendData = function () {
+      if (Meteor.user()) {
+        getFriendData();
+      } else {
+        Meteor.setTimeout(tryGetFriendData, 500);
       }
-    });
-    callback(friends);
-  });
-};
+    }
+    tryGetFriendData();
+
+  }
+}
