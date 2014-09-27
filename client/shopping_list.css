@@ -187,7 +187,21 @@
   border-bottom: 1px solid rgb(119, 119, 119);
   border-bottom: 0;
   color: #444;
+  /*position: relative;*/
 }
 .shoppingList li:last-of-type {
   border-bottom: 1px solid #777;
 }
+
+
+/*
+.js-delete {
+  background: url('ex-icon.png') no-repeat scroll;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 25px;
+  right: 56px;
+  background-size: 70%;
+}
+*/

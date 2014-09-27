@@ -1,0 +1,14 @@
+.store-list .search-results li {
+  margin: 0 auto;
+  width: 400px;
+  color: white;
+  padding: 14px;
+  background-color: rgb(216, 31, 56);
+  z-index: 100;
+  border-color: #bbb;
+  box-shadow: 0 2px 20px 4px rgba(0, 0, 0, 0.2);
+}
+svg {
+  width: 100% !important;
+  height: auto !important;
+}

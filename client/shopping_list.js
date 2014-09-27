@@ -8,8 +8,13 @@ Template.ShoppingList.title = function () {
 }
 
 Template.ShoppingList.items = function () {
-  var list = getCurrentList() || {_id: null};
-  return Items.find({shopping_list_id: list._id});
+  var list = getCurrentList();
+  return list && Items.find({shopping_list_id: list._id});
+}
+
+Template.ShoppingList.hasItems = function () {
+  var list = getCurrentList();
+  return list && Items.find({shopping_list_id: list._id}).count() > 0;
 }
 
 Template.ShoppingList.friendSpaces = function () {

@@ -45,11 +45,15 @@
       </ul>
     </div>
 
-    <a href="/goshop/{{id}}">
-      Just Fucking Shop
-    </a>
-
   </div>
+
+  {{#if hasItems}}
+  <div class="go-link">
+    <a href="/goshop/{{id}}">
+      Go shop!
+    </a>
+  </div>
+  {{/if}}
 
 </template>
 

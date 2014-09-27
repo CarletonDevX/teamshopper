@@ -2,14 +2,16 @@
   <div class="storeFinder">
     <div style="display: none" id="data-id-more" data-id="{{id}}"></div>
 
-    <div class="list-title">
-      <a href="/list/{{id}}">back</a>
-      Go Shopping for {{title}}
+    <div class="shoppingListHead">
+      <div class="list-title">
+        <a href="/list/{{id}}">&lsaquo;</a>
+        Go Shopping for {{title}}
+      </div>
     </div>
 
     <div class="store-list">
       <div id="search-wrapper">
-        <input type="text" id="search-bar"><br />
+        <input type="number" id="search-bar" placeholder="ZIP CODE"><br />
         <ul class="search-results"></ul>
       </div>
     </div>

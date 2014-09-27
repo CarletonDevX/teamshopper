@@ -1,5 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:800italic);
-
+a:link {
+  text-decoration: none;
+}
 html {
   height: 100%;
 }
@@ -55,4 +57,22 @@ ul {
 }
 .login-display-name {
   font-size: 13px;
+}
+
+/* Go shop */
+.go-link {
+  position: absolute;
+  bottom: 40px;
+  text-align: center;
+  width: 100%;
+}
+.go-link a {
+  display: inline-block;
+  width: 200px;
+  height: 30px;
+  line-height: 30px;
+  text-decoration: none;
+  color: rgb(216, 31, 56);
+  border: 2px solid rgb(216, 31, 56);
+  border-radius: 24px;
 }

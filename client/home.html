@@ -3,11 +3,16 @@
   <div class="shoppingLists">
     <ul>
       {{#each shoppingLists}}
-      <li class="shoppingList">
-        <a href="list/{{_id}}">{{title}}</a>
-      </li>
+      {{> shoppingListItem}}
       {{/each}}
     </ul>
     <button class="{{inputSubmit}}" type="button"><span>+</span></button>
   </div>
+</template>
+
+<template name="shoppingListItem">
+  <li class="shoppingList">
+    <a href="list/{{_id}}">{{title}}</a>
+    <span class="js-delete"></span>
+  </li>
 </template>
