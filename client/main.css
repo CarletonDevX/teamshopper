@@ -13,13 +13,13 @@ body {
 .wrapper {
   background: url('geometry2.png?1');
   min-height: 100%;
-  height: 100%;
+  /*height: 100%;*/
   position:relative;
 }
 .content {
   /*height: 100%;*/
   padding-bottom: 18px;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 .footer {
   width: 100%;

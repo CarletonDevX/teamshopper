@@ -38,6 +38,9 @@ MeteorFB.onReady(function () {
 
 Template.ShoppingList.rendered = function () {
 
+  // Move sidebar for longer sidebar-ness
+  $('.friendsSidebar').appendTo('.wrapper');
+
   var listId = $('div#data-id').attr('data-id');
   Session.set('listId', listId);
 
@@ -150,6 +153,7 @@ Template.ShoppingList.events({
   },
   'click .addFriend': function () {
     $('.shoppingListContent').toggleClass('sidebarOpen');
+    $('.friendsSidebar').toggleClass('sidebarOpen');
   },
   'focus .js-list-title-input': function () {
     var titleDisplay = $('.js-list-title-display');
@@ -165,13 +169,17 @@ Template.ShoppingList.events({
     ShoppingLists.update(Session.get("listId"), {$set: {title: title}});
     titleInput.val('');
     titleDisplay.show();
+  },
+  'focus #search-bar': function () {
+    $('.footer').hide();
+    // if ($('.search-results').length > 0) {
+    //   console.log('yay');
+    //   $('.search-results').show();
+    // }
+  },
+  'blur #search-bar': function () {
+    $('.footer').show();
   }
-  // 'focus #search-bar': function () {
-  //   if ($('.search-results').length > 0) {
-  //     console.log('yay');
-  //     $('.search-results').show();
-  //   }
-  // }
 });
 
 Template.FriendInSidebar.events({

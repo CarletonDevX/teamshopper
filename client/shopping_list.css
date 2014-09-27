@@ -8,8 +8,9 @@
 }
 .list-title,
 .list-title input {
-  font-family: Open Sans;
+  font-family: Open Sans, sans-serif;
   font-weight: 800;
+  font-style: italic;
   font-size: 24px;
   height: 40px;
   line-height: 12px;
@@ -47,13 +48,26 @@
   position: relative;
 }
 .friendsSidebar {
-  position: absolute;
+/*  position: absolute;
   top: 0;
   left: 100%;
   width: 300px;
-  height: 1000%;
+  padding-top: 47px;
+  background-color: #ccc;*/
+  position: absolute;
+  top: 60px;
+  bottom: 20px;
+  right: -300px;
+  width: 300px;
   padding-top: 47px;
   background-color: #ccc;
+  -webkit-transition: right 500ms ease;
+     -moz-transition: right 500ms ease;
+       -o-transition: right 500ms ease;
+          transition: right 500ms ease;
+}
+.friendsSidebar.sidebarOpen {
+  right: 0;
 }
 .friendsSidebar li {
   border-top: 1px solid #888;
@@ -96,6 +110,9 @@
   max-width: 100%;
   overflow-x: scroll;
   white-space: nowrap;
+}
+.friendsSpaces::-webkit-scrollbar { 
+  display: none; 
 }
 .friendsSpaces li {
   display: inline-block;
