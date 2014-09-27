@@ -2,7 +2,31 @@
 targetAPI = {
   devId: "f10aa86b665e6385fda70e39e6725db5",
   apiKey: "03564f3d3ef34107e73e1c1ec5b775d3",
-  key: "957c2c43e08e8cde0c48bebd594bb1a5"
+  key: "957c2c43e08e8cde0c48bebd594bb1a5",
+
+  combinations: function (numArr, choose) {
+    var n = numArr.length;
+    var c = [];
+    var inner = function(start, choose_) {
+        if (choose_ == 0) {
+            return c;
+        } else {
+            for (var i = start; i <= n - choose_; ++i) {
+                c.push(numArr[i]);
+                inner(i + 1, choose_ - 1);
+                c.pop();
+            }
+        }
+    }
+    inner(0, choose);
+  },
+
+  factorial: function (num) {
+    var rval=1;
+    for (var i = 2; i <= num; i++)
+        rval = rval * i;
+    return rval;
+  },
 
   request: function(url, method, data, cb){
     $.ajax({
@@ -12,7 +36,7 @@ targetAPI = {
       error: cb,
       type: method
     });
-  }
+  },
 
   searchNearby: function(lat,lng,cb){
     return this.request("http://api.target.com:80/v2/store?nearby=%d,%d&range=30&key=%s".format(lat,lng,this.key), "GET", {}, cb)
@@ -31,12 +55,71 @@ targetAPI = {
     return {"products": productIds}
   },
 
-  productSearch: function(productIds, cb) {
-    return this.request("http://api.target.com:80/v1/promotions/weeklyad/storeslugs?storeref=%d&key=%s".format(storeId,this.key), "POST", this.projectIdsToObj(productIds), cb)
+  productSearch: function(query, cb) {
+    return this.request("http://www.tgtappdata.com/v1/gen2spec/search/outside/%d/%s".format(storeId,query.replace(" ", "+")), "GET", {}, cb)
+  },
+
+  compareRoutes: function(route1, route2) {
+    route1Sum = 0;
+    for(var i = 0; i <= route1.length - 2; i++;){
+      var thisPoint = route1[i];
+      var nextPoint = route1[i+1];
+
+      var deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
+      var deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
+      var dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+      route1Sum = route1Sum + dist;
+    }
+
+    route2Sum = 0;
+    for(var j = 0; j <= route2.length - 2; j++;){
+      var thisPoint = route2[j];
+      var nextPoint = route2[j+1];
+
+      var deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
+      var deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
+      var dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+      route2Sum = route2Sum + dist;
+    }
+
+    if (route1Sum < route2Sum) { return true; } else { return false; }
   },
 
   findRoute: function(coordinatePairs, cb) {
-    
+    var t = coordinatePairs;
+    var tBest, tPrime;
+    var noChange = true;
+
+    //var edgePairsIndexArray = new Array(this.factorial(coordinatePairs.length)/2.0/this.factorial(coordinatePairs.length - 2));
+
+    var edgePairsIndexArray = new Array(coordinatePairs.length);
+
+    for(var i == 0; i < edgePairsIndexArray.length; i++){
+      edgePairsIndexArray[i] = i;
+    }
+
+    var edgePairsCombinations = this.combinations(edgePairsIndexArray, 2);
+
+    do {
+      tBest = t;
+
+      for(var i = 0; i <= edgePairsCombinations.length; i++ ){
+        var indexOf1 = edgePairsCombinations[i][0];
+        var indexOf2 = edgePairsCombinations[i][1];
+
+        tPrime = JSON.parse(JSON.stringify(t));
+        var tmp = tPrime[indexOf1];
+        tPrime[indexOf1] = tPrime[indexOf2];
+        tPrime[indexOf2] = tmp;
+        if (compareRoutes(tPrime, tBest)) {
+          tBest = tPrime;
+          noChange = false;
+        }
+      }
+      t = tBest;
+    } while(!noChange)
+
+    return t;
   },
 
   getMapForProductsAtStore: function(productIds, storeId, cb) {
