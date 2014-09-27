@@ -17,7 +17,7 @@ targetAPI = {
                 c.pop();
             }
         }
-    }
+    };
     inner(0, choose);
   },
 
@@ -39,46 +39,49 @@ targetAPI = {
   },
 
   searchNearby: function(lat,lng,cb){
-    return this.request("http://api.target.com:80/v2/store?nearby=%d,%d&range=30&key=%s".format(lat,lng,this.key), "GET", {}, cb)
+    return this.request("http://api.target.com:80/v2/store?nearby=%d,%d&range=30&key=%s".format(lat,lng,this.key), "GET", {}, cb);
   },
 
   individualStore: function(storeId, cb) {
-    return this.request("http://api.target.com/v2/location/%d?key=%s".format(storeId,this.key), "GET", {}, cb)
+    return this.request("http://api.target.com/v2/location/%d?key=%s".format(storeId,this.key), "GET", {}, cb);
   },
 
   storePromos: function(storeId, cb) {
-    return this.request("http://api.target.com:80/v1/promotions/weeklyad/storeslugs?storeref=%d&key=%s".format(storeId,this.key), "GET", {}, cb)
+    return this.request("http://api.target.com:80/v1/promotions/weeklyad/storeslugs?storeref=%d&key=%s".format(storeId,this.key), "GET", {}, cb);
   },
 
   productIdsToObj: function(productIds) {
-    var productIds = productIds.map(function(item){ return {"productId":item } })
-    return {"products": productIds}
+    productIds = productIds.map(function(item){ return {"productId":item}; });
+    return {"products": productIds};
   },
 
-  productSearch: function(query, cb) {
-    return this.request("http://www.tgtappdata.com/v1/gen2spec/search/outside/%d/%s".format(storeId,query.replace(" ", "+")), "GET", {}, cb)
+  productSearch: function(storeId, query, cb) {
+    return this.request("http://www.tgtappdata.com/v1/gen2spec/search/outside/%d/%s".format(storeId,query.replace(" ", "+")), "GET", {}, cb);
   },
 
   compareRoutes: function(route1, route2) {
-    route1Sum = 0;
-    for(var i = 0; i <= route1.length - 2; i++;){
-      var thisPoint = route1[i];
-      var nextPoint = route1[i+1];
+    var deltaX, deltaY, dist, thisPoint, nextPoint;
 
-      var deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
-      var deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
-      var dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+
+    var route1Sum = 0;
+    for(var i = 0; i <= route1.length - 2; i++){
+      thisPoint = route1[i];
+      nextPoint = route1[i+1];
+
+      deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
+      deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
+      dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
       route1Sum = route1Sum + dist;
     }
 
-    route2Sum = 0;
-    for(var j = 0; j <= route2.length - 2; j++;){
-      var thisPoint = route2[j];
-      var nextPoint = route2[j+1];
+    var route2Sum = 0;
+    for(var j = 0; j <= route2.length - 2; j++){
+      thisPoint = route2[j];
+      nextPoint = route2[j+1];
 
-      var deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
-      var deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
-      var dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+      deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
+      deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
+      dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
       route2Sum = route2Sum + dist;
     }
 
@@ -94,7 +97,7 @@ targetAPI = {
 
     var edgePairsIndexArray = new Array(coordinatePairs.length);
 
-    for(var i == 0; i < edgePairsIndexArray.length; i++){
+    for(var i = 0; i < edgePairsIndexArray.length; i++){
       edgePairsIndexArray[i] = i;
     }
 
@@ -103,34 +106,34 @@ targetAPI = {
     do {
       tBest = t;
 
-      for(var i = 0; i <= edgePairsCombinations.length; i++ ){
-        var indexOf1 = edgePairsCombinations[i][0];
-        var indexOf2 = edgePairsCombinations[i][1];
+      for(var j = 0; j <= edgePairsCombinations.length; j++ ){
+        var indexOf1 = edgePairsCombinations[j][0];
+        var indexOf2 = edgePairsCombinations[j][1];
 
         tPrime = JSON.parse(JSON.stringify(t));
         var tmp = tPrime[indexOf1];
         tPrime[indexOf1] = tPrime[indexOf2];
         tPrime[indexOf2] = tmp;
-        if (compareRoutes(tPrime, tBest)) {
+        if (this.compareRoutes(tPrime, tBest)) {
           tBest = tPrime;
           noChange = false;
         }
       }
       t = tBest;
-    } while(!noChange)
+    } while(!noChange);
 
-    return t;
+    return cb(t);
   },
 
   getMapForProductsAtStore: function(productIds, storeId, cb) {
     return this.request(
-      "http://api.target.pointinside.com:80/search/v1.1/product/lookup?devId=%s&storeId=%d&apiKey=%s".format(this.devId,storeId,this.apiKey) 
+      "http://api.target.pointinside.com:80/search/v1.1/product/lookup?devId=%s&storeId=%d&apiKey=%s".format(this.devId,storeId,this.apiKey),
       "POST", 
       this.projectIdsToObj(productIds), 
       function(result) {
         var venueId = result.results[0].product.locations[0].venue;
         var coordinatePairs = result.results.map(function(item){
-          [item.product.locations[0].x, item.product.locations[0].y] 
+          return [item.product.locations[0].x, item.product.locations[0].y];
         });
 
         this.request(
@@ -147,16 +150,18 @@ targetAPI = {
             })[0];
             var baseRatioX = svgItem.baseRatioX;
             var baseRatioY = svgItem.baseRatioY;
-            var coordinatePairsAdjusted = coordinatePairs.map(function(pair){ return [pair[0] * baseRatioX, pair[1] * baseRatioY]; })
+            var coordinatePairsAdjusted = coordinatePairs.map(function(pair){ return [pair[0] * baseRatioX, pair[1] * baseRatioY]; });
             var imageUrl = svgItem.imageUrl;
 
             cb(imageUrl, coordinatePairsAdjusted);
         });
-    })
+    });
   },
 
   addMapToElement: function(elementToAppendTo, productIds, storeId, cb) {
-    return this.getMapForProductsAtStore(productIds, storeId, function(imageUrl, coordinatePairsAdjusted){
+    return this.getMapForProductsAtStore(productIds, storeId, function(
+      imageUrl, 
+      coordinatePairsAdjusted){
       return this.request(imageUrl+"?apiKey=%s&devId=%s".formate(this.apiKey,this.devId), "GET", {}, function(result) {
         elementToAppendTo.append(result);
         /// find svg element and add circles
@@ -174,9 +179,10 @@ targetAPI = {
             var nextPoint = shortestPath[i+1];
 
             svg.append(line.format(currentPoint[0], currentPoint[1], nextPoint[0], nextPoint[1]));
+            return cb(elementToAppendTo);
           }
         });
-      }
+      });
     });
   }
 };
