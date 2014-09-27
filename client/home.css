@@ -1,0 +1,32 @@
+.shoppingLists ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.shoppingLists li {
+  width: 100%;
+  text-align: center;
+}
+
+.shoppingLists li a,
+.shoppingLists button {
+  margin: 0 auto;
+  display: block;
+  width: 50%;
+  height: 80px;
+  line-height: 80px;
+  border: 2px solid black;
+  box-sizing: border-box;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.shoppingLists button {
+  margin-bottom: 20px;
+}
+
+.shoppingLists li a:hover,
+.shoppingLists button:hover {
+  background: blue;
+}

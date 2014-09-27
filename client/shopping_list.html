@@ -1,20 +1,22 @@
 <template name="ShoppingList">
-  <a href="/home">back</a>
-  List # {{index}}
-  <ul>
-    {{#each items}}
-    <li>
-      {{name}}
-    </li>
-    {{/each}}
-  </ul>
-  <form>
-    <input class="{{inputField}}" type="text">
-    <button class="{{inputSubmit}}"></button>
-  </form>
-  <div id="search-wrapper">
-    <input type="text" id="input">
-    <ul class="search-results">
+  <div class="shoppingList">
+    <a href="/home">back</a>
+    List # {{index}}
+    <ul>
+      {{#each items}}
+      <li>
+        {{name}}
+      </li>
+      {{/each}}
     </ul>
+    <form>
+      <input class="{{inputField}}" type="text">
+      <button class="{{inputSubmit}}"></button>
+    </form>
+    <div id="search-wrapper">
+      <input type="text" id="input">
+      <ul class="search-results">
+      </ul>
+    </div>
   </div>
 </template>

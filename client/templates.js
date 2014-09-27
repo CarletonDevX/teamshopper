@@ -1,6 +1,5 @@
 ////////
 
-Template.Home.inputField = 'js-input';
 Template.Home.inputSubmit = 'js-submit';
 
 Template.Home.shoppingLists = function () {
@@ -9,7 +8,6 @@ Template.Home.shoppingLists = function () {
 
 Template.Home.events({
   'click .js-submit': function () {
-    var itemName = $('.js-input').val();
     var index = ShoppingLists.find().count() + 1;
     ShoppingLists.insert({
       title: "Test list " + index,
