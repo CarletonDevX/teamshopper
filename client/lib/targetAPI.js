@@ -17,21 +17,14 @@ targetAPI = {
   apiKey: "03564f3d3ef34107e73e1c1ec5b775d3",
   key: "957c2c43e08e8cde0c48bebd594bb1a5",
 
-  combinations: function (numArr, choose) {
-    var n = numArr.length;
-    var c = [];
-    var inner = function(start, choose_) {
-        if (choose_ == 0) {
-            return c;
-        } else {
-            for (var i = start; i <= n - choose_; ++i) {
-                c.push(numArr[i]);
-                inner(i + 1, choose_ - 1);
-                c.pop();
-            }
-        }
-    };
-    inner(0, choose);
+  combinations2: function (numArr) {
+    var combinations = [];
+     for (var i = 0; i < numArr.length; i++) {
+       for (var j = i; j < numArr.length; i++) {
+         combinations.push([numArr[i],numArr[j]])
+       };
+     };
+    return combinations;
   },
 
   factorial: function (num) {
@@ -46,8 +39,11 @@ targetAPI = {
     console.log(data);
     var config = {
       url: url,
-      data: data,
+      data: JSON.stringify(data),
       success: cb,
+      headers: {
+        "Content-Type":"text/plain",
+      },
       // error: cb,
       type: method
     };
@@ -122,7 +118,8 @@ targetAPI = {
       edgePairsIndexArray[i] = i;
     }
 
-    var edgePairsCombinations = this.combinations(edgePairsIndexArray, 2);
+    var edgePairsCombinations = this.combinations2(edgePairsIndexArray);
+    console.log(edgePairsCombinations)
 
     do {
       tBest = t;
@@ -159,11 +156,12 @@ targetAPI = {
         });
 
         self.request(
-          "http://api.target.pointinside.com/feeds/maps/v1.1/venues/{0}/zoneImages?devId={1}&apiKey={2}".format(venueId,this.devId,this.apiKey), 
+          "http://api.target.pointinside.com/feeds/maps/v1.1/venues/{0}/zoneImages?devId={1}&apiKey={2}".format(venueId,self.devId,self.apiKey), 
           "GET", 
           {}, 
           function(result){
-            var svgItem = result.filter(function(item){
+            console.log(result);
+            var svgItem = result.data.filter(function(item){
               if(item.imageType == "DEFAULT" && item.mimeType == "image/svg+xml"){
                 return true;
               } else {
@@ -174,26 +172,38 @@ targetAPI = {
             var baseRatioY = svgItem.baseRatioY;
             var coordinatePairsAdjusted = coordinatePairs.map(function(pair){ return [pair[0] * baseRatioX, pair[1] * baseRatioY]; });
             var imageUrl = svgItem.imageUrl;
+            console.log(coordinatePairsAdjusted)
 
-            cb(imageUrl, coordinatePairsAdjusted);
+            return cb(imageUrl, coordinatePairsAdjusted);
           });
       });
   },
 
   addMapToElement: function(elementToAppendTo, productIds, storeId, cb) {
+    var self = this;
     return this.getMapForProductsAtStore(productIds, storeId, function(
       imageUrl, 
       coordinatePairsAdjusted){
-      return this.request(imageUrl+"?apiKey={0}&devId={1}".formate(this.apiKey,this.devId), "GET", {}, function(result) {
-        elementToAppendTo.append(result);
+      return self.request(imageUrl+"?apiKey={0}&devId={1}".format(self.apiKey,self.devId), "GET", {}, function(result) {
+        console.log(coordinatePairsAdjusted);
+        elementToAppendTo.append($('svg',result));
         /// find svg element and add circles
         var svg = $('svg',elementToAppendTo);
-        var circle = '<circle xmlns="http://www.w3.org/2000/svg" cx="{0}" cy="{1}" fill="#00FF00" r="10"/>'; 
-        for(var pair in coordinatePairsAdjusted) {
-          svg.append(circle.format(pair[0],pair[1]));
+         
+        for(var i = 0; i < coordinatePairsAdjusted.length; i++) {
+          var pair = coordinatePairsAdjusted[i]
+          console.log(pair);
+          superSVG = svg;
+          var circle = '<circle cx="{0}" cy="{1}" fill="#00FF00" r="100"/>'.format(pair[0],pair[1]);
+          var formattedCircle = $(circle);
+          svg.append(formattedCircle);
+          console.dir(circle);
         }
 
-        this.findPath(coordinatePairsAdjusted, function(shortestPath){
+        $('svg').width(500).height(500);
+        $('body').html($('body').html()) // manual reflow
+
+        self.findRoute(coordinatePairsAdjusted, function(shortestPath){
           var line = '<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" style="stroke:rgb(255,0,0);stroke-width:2" />';
 
           for (var i = 0; i <= shortestPath.length - 2; i++) {
@@ -204,6 +214,8 @@ targetAPI = {
             
           }
         });
+
+        $('body').html($('body').html()) // manual reflow
 
         return cb(svg);
       });
