@@ -6,6 +6,28 @@ Template.ShoppingList.items = function () {
   return Items.find({shopping_list_id: list._id});
 }
 
+Template.ShoppingList.friendSpaces = function () {
+  return [1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+}
+
+Template.ShoppingList.addedFriends = function () {
+  return Session.get('friends');
+}
+
+var friendsFound = false;
+var acquireFriends = function () {
+  if (!friendsFound) {
+    console.log("try to find friends");
+    // getFriends(function (friends) {
+    //   friendsFound = true;
+    //   alert('got friends');
+    //   console.log(friends);
+    //   Session.set('friends', friends);
+    // });
+  }
+  Meteor.setTimeout(acquireFriends, 2000);
+}
+
 Template.ShoppingList.rendered = function () {
 
   var listIndex = parseInt($('div#data-index').attr('data-index'));
@@ -103,6 +125,8 @@ Template.ShoppingList.rendered = function () {
     }
     getTarget($('#search-bar').val(), shoveToDOM(resultsList));
   }));
+
+  acquireFriends();
 
 };
 

@@ -12,16 +12,15 @@
   background: #fee;
 }
 
-.fb-login {
-  display: block;
+#login-buttons {
+  width: 100%;
+  text-align: center;
+}
+
+#login-buttons-facebook {
   position: relative;
   top: -25px;
-  width: 70%;
-  max-width: 500px;
-  height: 50px;
   margin: 0 auto;
-  line-height: 50px;
-  text-align: center;
-  background: #5af;
-  cursor: pointer;
+  font-size: 16px !important;
+  padding: 14px 24px !important;
 }

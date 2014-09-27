@@ -1,10 +1,26 @@
 <template name="ShoppingList">
   <div style="display: none" id="data-index" data-index="{{index}}"></div>
-  <div class="shoppingList">
+
+  <div class="list-title">
     <a href="/home">back</a>
     List # {{index}}
+  </div>
+
+  <div class="friendsList">
+    <ul class="friendsSpaces">
+      {{#each friendSpaces}}<li></li>{{/each}}
+    </ul>
+    <ul class="friendsPhotos">
+      {{#each addFriends}}
+      <li><img src="{{pic}}" alt=""></li>
+      {{/each}}
+    </ul>
+    <div class="addFriend"></div>
+  </div>
+
+  <div class="shoppingList">
     <div id="search-wrapper">
-      <input type="text" id="search-bar">
+      <input type="text" id="search-bar"><br />
       <ul class="search-results"></ul>
     </div>
     <ul id="items-to-buy">
@@ -16,4 +32,5 @@
       {{/each}}
     </ul>
   </div>
+
 </template>

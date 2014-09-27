@@ -8,16 +8,32 @@ Router.configure({
   }
 });
 
+var redirectIfNotLoggedIn = function () {
+  if (!Meteor.user()) {
+    if (!Meteor.loggingIn()) {
+      Router.go('Login');
+    }
+  }
+}
+
 Router.map(function () {
 
   this.route('Login', {
-    path: '/'
+    path: '/',
+    onBeforeAction: function () {
+      if (Meteor.user()) {
+        Router.go('Home');
+      }
+    }
   });
 
-  this.route('Home');
+  this.route('Home', {
+    onBeforeAction: redirectIfNotLoggedIn,
+  });
 
   this.route('ShoppingList', {
     path: '/list/:index',
+    onBeforeAction: redirectIfNotLoggedIn,
     data: function () {
       return { index: this.params.index };
     }
