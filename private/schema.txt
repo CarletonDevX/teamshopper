@@ -1,6 +1,6 @@
 ShoppingList
   title: String
-  index: Int
+  user_ids: [ObjectId]
 Item
   shopping_list_id: ObjectId
   status: String

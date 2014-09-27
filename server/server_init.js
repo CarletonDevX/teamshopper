@@ -9,10 +9,6 @@ if (Meteor.isServer) {
 
   Meteor.startup(function () {
     clearDB();
-    ShoppingLists.insert({
-      title: "Test list 1",
-      index: 1
-    });
   });
 
 }

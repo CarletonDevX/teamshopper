@@ -1,8 +1,12 @@
 Template.ShoppingList.inputField = 'js-input';
 Template.ShoppingList.inputSubmit = 'js-submit';
 
+var getCurrentList = function () {
+  return ShoppingLists.findOne(Session.get('listId'));
+}
+
 Template.ShoppingList.items = function () {
-  var list = ShoppingLists.findOne({index: Session.get('listIndex')}) || {_id: null};
+  var list = getCurrentList() || {_id: null};
   return Items.find({shopping_list_id: list._id});
 }
 
@@ -22,8 +26,8 @@ MeteorFB.onReady(function () {
 
 Template.ShoppingList.rendered = function () {
 
-  var listIndex = parseInt($('div#data-index').attr('data-index'));
-  Session.set('listIndex', listIndex);
+  var listId = $('div#data-id').attr('data-id');
+  Session.set('listId', listId);
 
   function getTarget (text, callback) {
     if (text.trim() === '') {
@@ -59,7 +63,7 @@ Template.ShoppingList.rendered = function () {
     return function () {
       $('.search-results').remove();
       $('#search-bar').val('');
-      var list = ShoppingLists.findOne({index: listIndex});
+      var list = getCurrentList();
       var select = {
         part_number: partNumber,
         shopping_list_id: list._id,
