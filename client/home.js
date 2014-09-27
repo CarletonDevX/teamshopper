@@ -8,8 +8,7 @@ Template.Home.events({
   'click .js-submit': function () {
     var index = ShoppingLists.find({user_ids: [Meteor.user()._id]}).count() + 1;
     ShoppingLists.insert({
-      title: "Test list " + index,
-      index: index,
+      title: "New list " + index,
       user_ids: [Meteor.user()._id]
     });
   }

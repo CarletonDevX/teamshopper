@@ -32,10 +32,10 @@ Router.map(function () {
   });
 
   this.route('ShoppingList', {
-    path: '/list/:index',
+    path: '/list/:_id',
     onBeforeAction: redirectIfNotLoggedIn,
     data: function () {
-      return { index: this.params.index };
+      return { id: this.params._id };
     }
   });
 

@@ -2,10 +2,7 @@ Template.ShoppingList.inputField = 'js-input';
 Template.ShoppingList.inputSubmit = 'js-submit';
 
 var getCurrentList = function () {
-  return ShoppingLists.findOne({
-    index: Session.get('listIndex'),
-    user_ids: Meteor.user()._id
-  })
+  return ShoppingLists.findOne(Session.get('listId'));
 }
 
 Template.ShoppingList.items = function () {
@@ -29,8 +26,8 @@ MeteorFB.onReady(function () {
 
 Template.ShoppingList.rendered = function () {
 
-  var listIndex = parseInt($('div#data-index').attr('data-index'));
-  Session.set('listIndex', listIndex);
+  var listId = $('div#data-id').attr('data-id');
+  Session.set('listId', listId);
 
   function getTarget (text, callback) {
     if (text.trim() === '') {
