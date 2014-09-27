@@ -20,8 +20,8 @@ Template.GoShopping.rendered = function () {
       data: {
         nearby: text,
         key: 'J5PsS2XGuqCnkdQq0Let6RSfvU7oyPwF',
-        limit: 10,
-        range: 20
+        limit: 12,
+        range: 60
       },
       dataType:"jsonp",
       headers:{
@@ -30,66 +30,82 @@ Template.GoShopping.rendered = function () {
         "Accept":"application/json"
       },
       success: function (result, status, xhr) {
-        console.dir(result);
-        return;
-        var rawResults = result['CatalogEntryView'];
+        if(result.Locations['@count'] === 0){return;}
+        var rawResults = result.Locations.Location;
         var newList = rawResults.map(function (x, i, arr) {
           return {
-            partNumber: x.partNumber,
-            productCode: x.DPCI,
-            title: x.ItemAttributes[0].Attribute[0].description
+            name: x.Name,
+            id: x.ID,
           };
         })
-        return callback(newList);
+        var newNewList = [];
+        var ze_data = JSON.stringify({
+          products: Items.find({shopping_list_id: Session.get('listId')}).fetch().map(function (x, i, arr) {
+            return {productId: x.product_code};
+          })
+        });
+        for (var i = 0; i < newList.length; i++) {
+          newList[i]
+          var config = {
+            url: 'http://api.target.pointinside.com:80/search/v1.1/product/lookup?devId=f10aa86b665e6385fda70e39e6725db5&apiKey=03564f3d3ef34107e73e1c1ec5b775d3&storeId=' + newList[i].id,
+            data: ze_data,
+            type: "POST",
+            headers:{
+              "Content-Type":"application/json",
+              "Accept":"application/json"
+            },
+            async: false
+          }
+          var result = JSON.parse($.ajax(config).responseText);
+          if (result.status !== "OK") {
+            continue;
+          }
+
+          var allThere = true;
+          for (var j = 0; j < result.results.length; j++) {
+            allThere = allThere && (result.results[j].lookupStatus === "FOUND");
+          }
+
+          if (allThere) {
+            newNewList.push(newList[i]);
+          }
+        }
+        return callback(newNewList);
       },
       error: function (xhr, status, error) {
         // TODO - probs ignore
       }
-
     });
   }
 
-  function onClickItem (partNumber, productCode, name) {
+  function onClickItem (id) {
     return function () {
+      var items = Items.find({shopping_list_id: Session.get('listId')}).fetch().map(function (x, i, arr) {
+        return x.product_code;
+      });
       $('.search-results').remove();
       $('#search-bar').val('');
-      var list = getCurrentList();
-      var select = {
-        part_number: partNumber,
-        shopping_list_id: list._id,
-        product_code: productCode
-      };
-      var oldObj = Items.findOne(select);
-      if (oldObj) {
-        Items.update(
-          {_id: oldObj._id},
-          {
-            $set: {
-              status: 'need',
-              name: name
-            },
-            $inc: {
-              count: 1
-            }
-          }
-        );
-      } else {
-        select.status = 'need';
-        select.name = name;
-        select.count = 1;
-        Items.insert(select);
-      }
+
+      console.log("TARGET CALL:");
+      console.log(items);
+      console.log(parseInt(id));
+      targetAPI.addMapToElement(
+        $('#MAPIT'),
+        items,
+        parseInt(id),
+        function() {});
     }
   }
 
   function shoveToDOM (el) {
     return function (listOfResults) {
+      console.dir(listOfResults);
       $('.search-results li').remove();
       for (var i = 0; i < listOfResults.length; i++) {
-        var searchResult = $('<li>' + listOfResults[i]['title'] + '</li>');
+        var searchResult = $('<li>' + listOfResults[i]['name'] + '</li>');
         $(searchResult).click(
           onClickItem(
-            //TODO
+            listOfResults[i]['id']
           )
         );
         $('#search-wrapper .search-results').append(searchResult);
@@ -111,18 +127,3 @@ Template.GoShopping.rendered = function () {
   }));
 
 };
-
-Template.GoShopping.events({
-  'click #items-to-buy .up': function () {
-    var id = $(this)[0]._id;
-    Items.update({_id: id}, {$inc: {count: 1}});
-  },
-  'click #items-to-buy .down': function () {
-    var id = $(this)[0]._id;
-    Items.update({_id: id}, {$inc: {count: -1}});
-    if (Items.findOne({_id: id}).count === 0) {
-      Items.remove({_id: id});
-    };
-  },
-});
-
