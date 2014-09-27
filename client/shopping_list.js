@@ -1,8 +1,15 @@
 Template.ShoppingList.inputField = 'js-input';
 Template.ShoppingList.inputSubmit = 'js-submit';
 
+var getCurrentList = function () {
+  return ShoppingLists.findOne({
+    index: Session.get('listIndex'),
+    user_ids: Meteor.user()._id
+  })
+}
+
 Template.ShoppingList.items = function () {
-  var list = ShoppingLists.findOne({index: Session.get('listIndex')}) || {_id: null};
+  var list = getCurrentList() || {_id: null};
   return Items.find({shopping_list_id: list._id});
 }
 
@@ -59,7 +66,7 @@ Template.ShoppingList.rendered = function () {
     return function () {
       $('.search-results').remove();
       $('#search-bar').val('');
-      var list = ShoppingLists.findOne({index: listIndex});
+      var list = getCurrentList();
       var select = {
         part_number: partNumber,
         shopping_list_id: list._id,
