@@ -3,7 +3,6 @@ if (Meteor.isServer) {
 
   var clearDB = function () {
     Items.remove({});
-    Users.remove({});
     Groups.remove({});
     ShoppingLists.remove({});
   }
