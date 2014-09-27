@@ -1,7 +1,27 @@
-.list-title {
+.list-title,
+.list-title input {
+  font-family: Open Sans;
+  font-weight: 800;
   font-size: 24px;
   height: 40px;
-  line-height: 40px;
+  line-height: 12px;
+  padding: 4px 10px;
+  color: #444;
+}
+.list-title input {
+  position: absolute;
+  left: 27px;
+  background: none repeat scroll 0% 0% transparent;
+  border: none;
+  color: #666;
+  top: -1px;
+}
+.list-title a {
+  color: #444;
+  font-size: 64px;
+  text-decoration: none;
+  position: relative;
+  top: 8px;
 }
 .shoppingListContent {
   position: relative;
@@ -92,23 +112,37 @@
   border: 2px solid grey;
   border-radius: 24px;
   margin: 10px 0;
+  text-align: center;
+  font-size: 16px;
 }
 
 .search-results {
   display: inline-block;
   width: 400px;
-  border: 1px solid grey;
   cursor: pointer;
+  left: 0;
+  width: 100%;
+  position: absolute;
 }
-.search-results li {
-  padding: 9px;
+.shoppingList .search-results li {
+  margin: 0 auto;
+  width: 400px;
+  color: white;
+  padding: 5px;
+  background-color: rgb(216, 31, 56);
+  z-index: 100;
+  border-color: #bbb;
+  box-shadow: 0 2px 20px 4px rgba(0, 0, 0, 0.2);
 }
+
 
 /* Shopping list */
 .shoppingList li {
   padding: 15px;
-  border-bottom: 1px solid #777;
+  border: 1px solid rgb(119, 119, 119);
+  border-bottom: 0;
+  color: #444;
 }
-.shoppingList li:first-of-type {
-  border-top: 1px solid #777
+.shoppingList li:last-of-type {
+  border-bottom: 1px solid #777;
 }

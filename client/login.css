@@ -1,12 +1,13 @@
+.loginPage #login-buttons {
+  margin-left: -113px;
+  top: 50%;
+}
 #login-buttons {
   text-align: center;
-  top: 50%;
   position: absolute;
   left: 50%;
-  margin-left: -113px;
   margin-top: 17px;
 }
-
 #login-buttons-facebook {
   position: relative;
   top: -25px;

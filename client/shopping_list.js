@@ -149,7 +149,18 @@ Template.ShoppingList.events({
   },
   'click .addFriend': function () {
     $('.shoppingListContent').toggleClass('sidebarOpen');
+  },
+  'click .listTitle': function () {
+    var titleDisplay = $('.js-list-title-display');
+    titleDisplay.hide();
+    $('.js-list-title-input').show().val(titleDisplay.val());
   }
+  // 'focus #search-bar': function () {
+  //   if ($('.search-results').length > 0) {
+  //     console.log('yay');
+  //     $('.search-results').show();
+  //   }
+  // }
 });
 
 Template.FriendInSidebar.events({
