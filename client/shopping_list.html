@@ -1,0 +1,19 @@
+<template name="ShoppingList">
+  <div style="display: none" id="data-index" data-index="{{index}}"></div>
+  <div class="shoppingList">
+    <a href="/home">back</a>
+    List # {{index}}
+    <div id="search-wrapper">
+      <input type="text" id="search-bar">
+      <ul class="search-results"></ul>
+    </div>
+    <ul id="items-to-buy">
+      {{#each items}}
+      <li data-objid="{{_id}}">
+        <a class="up">&#8598;</a> <a class="down">&#8601;</a>
+        {{count}} &times; {{name}}
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</template>

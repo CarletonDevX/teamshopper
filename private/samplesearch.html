@@ -1,0 +1,78 @@
+<html>
+<head>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript">
+  //https://raw.githubusercontent.com/cowboy/jquery-throttle-debounce/v1.1/jquery.ba-throttle-debounce.min.js
+  (function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
+  </script>
+  <script type="text/javascript">
+$(document).ready(function () {
+  function getTarget (text, callback) {
+    if (text.trim() === '') {
+      return;
+    }
+    $.ajax({
+      url: 'https://api.target.com/v2/products/search',
+      data: {
+        pageSize: 6,
+        responseFormat: 'json',
+        searchTerm: text,
+        key: 'J5PsS2XGuqCnkdQq0Let6RSfvU7oyPwF',
+        storeId: 'T1211'
+      },
+      success: function (result, status, xhr) {
+        var listOfShit = result['CatalogEntryView'];
+        var newList = listOfShit.map(function (x, i, arr) {
+          var ret = {};
+          ret['partNumber'] = x['partNumber'];
+          ret['title'] = x['ItemAttributes'][0]['Attribute'][0]['description'];
+          return ret;
+        })
+        return callback(newList);
+      },
+      error: function (xhr, status, error) {
+        // TODO - probs ignore
+      }
+
+    })
+  }
+
+  function selectItem (storeIt) {
+    return function () {
+      alert('selected: ' + storeIt);
+    }
+  }
+
+  function shoveToDOM (el) {
+    return function (listOfShit) {
+      $('.options span').remove();
+      for (var i = 0; i < listOfShit.length; i++) {
+        var thing = $('<span style="display:block">' + listOfShit[i]['title'] + '</span>');
+        $(thing).click(selectItem(listOfShit[i]['partNumber']));
+        $('#wrapper .options').append(thing);
+      };
+    }
+  }
+
+  $('#input').keypress($.throttle(250, function (e) {
+    if(!$.inArray(e.keyCode,[13,16,17,18,19,20,27,35,36,37,38,39,40,91,93,224])){return;}
+    var thing = $('#wrapper .options');
+    if (!thing.length) {
+      thing = $('<div class="options"></div>');
+      $('#wrapper').append(thing);
+    } else {
+      thing = thing[0];
+    }
+    getTarget($('#input').val(), shoveToDOM(thing));
+  }));
+
+});
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+    <input type="text" id="input">
+    <div class="options"></div>
+  </div>
+</body>
+</html>

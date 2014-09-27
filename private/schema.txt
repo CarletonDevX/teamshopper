@@ -1,0 +1,10 @@
+ShoppingList
+  title: String
+  index: Int
+Item
+  shopping_list_id: ObjectId
+  status: String
+  part_number: String
+  product_code: String
+  name: String
+  count: Integer

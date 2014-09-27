@@ -1,0 +1,27 @@
+.outer {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.inner {
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%;
+  height: 100%;
+  background: #fee;
+}
+
+.fb-login {
+  display: block;
+  position: relative;
+  top: -25px;
+  width: 70%;
+  max-width: 500px;
+  height: 50px;
+  margin: 0 auto;
+  line-height: 50px;
+  text-align: center;
+  background: #5af;
+  cursor: pointer;
+}
