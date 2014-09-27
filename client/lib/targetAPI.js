@@ -20,8 +20,8 @@ targetAPI = {
   combinations2: function (numArr) {
     var combinations = [];
      for (var i = 0; i < numArr.length; i++) {
-       for (var j = i; j < numArr.length; i++) {
-         combinations.push([numArr[i],numArr[j]])
+       for (var j = i + 1; j < numArr.length; j++) {
+         combinations.push([numArr[i], numArr[j]])
        };
      };
     return combinations;
@@ -35,8 +35,6 @@ targetAPI = {
   },
 
   request: function(url, method, data, cb){
-    console.log(url);
-    console.log(data);
     var config = {
       url: url,
       data: JSON.stringify(data),
@@ -49,8 +47,6 @@ targetAPI = {
     };
 
     epicConfig = config;
-
-    console.log(config);
 
     return $.ajax(config);
   },
@@ -80,24 +76,28 @@ targetAPI = {
     var deltaX, deltaY, dist, thisPoint, nextPoint;
 
 
-    var route1Sum = 0;
-    for(var i = 0; i <= route1.length - 2; i++){
+    deltaX = route1[0][0] - route1[route1.length - 1][0];
+    deltaY = route1[0][1] - route1[route1.length - 1][1];
+    var route1Sum = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+    for(var i = 0; i < route1.length - 1; i++){
       thisPoint = route1[i];
       nextPoint = route1[i+1];
 
-      deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
-      deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
+      deltaX = nextPoint[0] - thisPoint[0];
+      deltaY = nextPoint[1] - thisPoint[1];
       dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
       route1Sum = route1Sum + dist;
     }
 
-    var route2Sum = 0;
-    for(var j = 0; j <= route2.length - 2; j++){
+    deltaX = route2[0][0] - route2[route2.length - 1][0];
+    deltaY = route2[0][1] - route2[route2.length - 1][1];
+    var route2Sum = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+    for(var j = 0; j < route2.length - 1; j++){
       thisPoint = route2[j];
       nextPoint = route2[j+1];
 
-      deltaX = Math.abs(nextPoint[0] - thisPoint[0]);
-      deltaY = Math.abs(nextPoint[1] - thisPoint[1]);
+      deltaX = nextPoint[0] - thisPoint[0];
+      deltaY = nextPoint[1] - thisPoint[1];
       dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
       route2Sum = route2Sum + dist;
     }
@@ -107,10 +107,7 @@ targetAPI = {
 
   findRoute: function(coordinatePairs, cb) {
     var t = coordinatePairs;
-    var tBest, tPrime;
-    var noChange = true;
-
-    //var edgePairsIndexArray = new Array(this.factorial(coordinatePairs.length)/2.0/this.factorial(coordinatePairs.length - 2));
+    var tBest, tPrime, noChange;
 
     var edgePairsIndexArray = new Array(coordinatePairs.length);
 
@@ -119,12 +116,12 @@ targetAPI = {
     }
 
     var edgePairsCombinations = this.combinations2(edgePairsIndexArray);
-    console.log(edgePairsCombinations)
 
     do {
-      tBest = t;
+      noChange = true;
+      tBest = JSON.parse(JSON.stringify(t));
 
-      for(var j = 0; j <= edgePairsCombinations.length; j++ ){
+      for(var j = 0; j < edgePairsCombinations.length; j++ ){
         var indexOf1 = edgePairsCombinations[j][0];
         var indexOf2 = edgePairsCombinations[j][1];
 
@@ -137,10 +134,25 @@ targetAPI = {
           noChange = false;
         }
       }
-      t = tBest;
+      t = JSON.parse(JSON.stringify(tBest));
     } while(!noChange);
 
-    return cb(t);
+    var deltaX, deltaY, dist;
+    var longestIdx = t.length-1;
+    deltaX = t[t.length - 1][0] - t[0][0];
+    deltaY = t[t.length - 1][1] - t[0][1];
+    var longest = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+    for(var i = 0; i < t.length - 1; i++){
+      deltaX = t[i][0] - t[i + 1][0];
+      deltaY = t[i][1] - t[i + 1][1];
+      dist = Math.pow(Math.pow(deltaX,2) + Math.pow(deltaY,2), 0.5);
+      if (dist > longest) {
+        longest = dist;
+        longestIdx = i;
+      }
+    }
+
+    return cb(t, longestIdx);
   },
 
   getMapForProductsAtStore: function(productIds, storeId, cb) {
@@ -160,7 +172,6 @@ targetAPI = {
           "GET", 
           {}, 
           function(result){
-            console.log(result);
             var svgItem = result.data.filter(function(item){
               if(item.imageType == "DEFAULT" && item.mimeType == "image/svg+xml"){
                 return true;
@@ -172,7 +183,6 @@ targetAPI = {
             var baseRatioY = svgItem.baseRatioY;
             var coordinatePairsAdjusted = coordinatePairs.map(function(pair){ return [pair[0] * baseRatioX, pair[1] * baseRatioY]; });
             var imageUrl = svgItem.imageUrl;
-            console.log(coordinatePairsAdjusted)
 
             return cb(imageUrl, coordinatePairsAdjusted);
           });
@@ -185,39 +195,42 @@ targetAPI = {
       imageUrl, 
       coordinatePairsAdjusted){
       return self.request(imageUrl+"?apiKey={0}&devId={1}".format(self.apiKey,self.devId), "GET", {}, function(result) {
-        console.log(coordinatePairsAdjusted);
         elementToAppendTo.append($('svg',result));
         /// find svg element and add circles
         var svg = $('svg',elementToAppendTo);
          
         for(var i = 0; i < coordinatePairsAdjusted.length; i++) {
           var pair = coordinatePairsAdjusted[i]
-          console.log(pair);
           superSVG = svg;
-          var circle = '<circle cx="{0}" cy="{1}" fill="#00FF00" r="100"/>'.format(pair[0],pair[1]);
-          var formattedCircle = $(circle);
-          svg.append(formattedCircle);
-          console.dir(circle);
+          var circle1 = '<circle cx="{0}" cy="{1}" fill="#FF0000" r="70"/>'.format(pair[0],pair[1]);
+          var circle2 = '<circle cx="{0}" cy="{1}" fill="#FFFFFF" r="50"/>'.format(pair[0],pair[1]);
+          var circle3 = '<circle cx="{0}" cy="{1}" fill="#FF0000" r="30"/>'.format(pair[0],pair[1]);
+          var formattedCircle1 = $(circle1);
+          var formattedCircle2 = $(circle2);
+          var formattedCircle3 = $(circle3);
+          svg.append(formattedCircle1);
+          svg.append(formattedCircle2);
+          svg.append(formattedCircle3);
         }
 
-        $('svg').width(500).height(500);
-        $('body').html($('body').html()) // manual reflow
+        self.findRoute(coordinatePairsAdjusted, function(shortestPath, longestIdx){
 
-        self.findRoute(coordinatePairsAdjusted, function(shortestPath){
-          var line = '<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" style="stroke:rgb(255,0,0);stroke-width:2" />';
-
-          for (var i = 0; i <= shortestPath.length - 2; i++) {
+          for (var i = 0; i < shortestPath.length; i++) {
+            if (i === longestIdx) {
+              continue;
+            }
             var currentPoint = shortestPath[i];
-            var nextPoint = shortestPath[i+1];
-
-            svg.append(line.format(currentPoint[0], currentPoint[1], nextPoint[0], nextPoint[1]));
-            
+            var nextPoint = shortestPath[(i === shortestPath.length - 1 ? 0 : i+1)];
+            var line = '<line x1="{0}" y1="{1}" x2="{2}" y2="{3}" stroke="#FF0000" stroke-width="20"/>'.format(currentPoint[0], currentPoint[1], nextPoint[0], nextPoint[1]);
+            var formattedLine = $(line);
+            svg.append(formattedLine);
           }
+
+          $('svg').width(800).height(800);
+          $('body').html($('body').html()) // manual reflow
+
+          return cb(svg);
         });
-
-        $('body').html($('body').html()) // manual reflow
-
-        return cb(svg);
       });
     });
   }
