@@ -1,0 +1,13 @@
+<template name="Home">
+  <ul>
+    {{#each shoppingLists}}
+    <li class="shoppingList">
+      <a href="list/{{index}}">{{title}}</a>
+    </li>
+    {{/each}}
+  </ul>
+  <form>
+    <input class="{{inputField}}" type="text">
+    <button class="{{inputSubmit}}" type="button"></button>
+  </form>
+</template>

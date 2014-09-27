@@ -1,22 +1,38 @@
+////////
+
+Template.Home.inputField = 'js-input';
+Template.Home.inputSubmit = 'js-submit';
+
 Template.Home.shoppingLists = function () {
   return ShoppingLists.find();
 }
 
-var shoppingListInput = "shopping_list_input";
-var shoppingListSubmit = "shopping_list_submit";
-Template.ShoppingList.inputField = shoppingListInput;
-Template.ShoppingList.inputSubmit = shoppingListSubmit;
+Template.Home.events({
+  'click .js-submit': function () {
+    var itemName = $('.js-input').val();
+    var index = ShoppingLists.find().count() + 1;
+    ShoppingLists.insert({
+      title: "Test list " + index,
+      index: index
+    });
+  }
+});
+
+////////
+
+Template.ShoppingList.inputField = 'js-input';
+Template.ShoppingList.inputSubmit = 'js-submit';
 
 Template.ShoppingList.items = function () {
   return Items.find();
 }
 
-shoppingListEvents = {};
-shoppingListEvents["click ." + shoppingListSubmit] = function () {
-  var itemName = $("." + shoppingListInput).val();
-  Items.insert({
-    shopping_list_id: 1,
-    name: itemName
-  });
-};
-Template.ShoppingList.events(shoppingListEvents);
+Template.ShoppingList.events({
+  'click .js-submit': function () {
+    var itemName = $('.js-input').val();
+    Items.insert({
+      shopping_list_id: 1,
+      name: itemName
+    });
+  },
+});
