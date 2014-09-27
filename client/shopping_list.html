@@ -7,10 +7,11 @@
       <input type="text" id="search-bar">
       <ul class="search-results"></ul>
     </div>
-    <ul>
+    <ul id="items-to-buy">
       {{#each items}}
-      <li>
-        {{name}}
+      <li data-objid="{{_id}}">
+        <a class="up">&#8598;</a> <a class="down">&#8601;</a>
+        {{count}} &times; {{name}}
       </li>
       {{/each}}
     </ul>

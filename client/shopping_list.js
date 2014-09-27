@@ -43,14 +43,34 @@ Template.ShoppingList.rendered = function () {
 
   function onClickItem (partNumber, productCode, name) {
     return function () {
+      $('.search-results').remove();
+      $('#search-bar').val('');
       var list = ShoppingLists.findOne({index: listIndex});
-      Items.insert({
-        shopping_list_id: list._id,
-        status: 'need',
+      var select = {
         part_number: partNumber,
-        product_code: productCode,
-        name: name
-      });
+        shopping_list_id: list._id,
+        product_code: productCode
+      };
+      var oldObj = Items.findOne(select);
+      if (oldObj) {
+        Items.update(
+          {_id: oldObj._id},
+          {
+            $set: {
+              status: 'need',
+              name: name
+            },
+            $inc: {
+              count: 1
+            }
+          }
+        );
+      } else {
+        select.status = 'need';
+        select.name = name;
+        select.count = 1;
+        Items.insert(select);
+      }
     }
   }
 
@@ -85,3 +105,17 @@ Template.ShoppingList.rendered = function () {
   }));
 
 };
+
+Template.ShoppingList.events({
+  'click #items-to-buy .up': function(){
+    var id = $(this)[0]._id;
+    Items.update({_id: id}, {$inc: {count: 1}});
+  },
+  'click #items-to-buy .down': function(){
+    var id = $(this)[0]._id;
+    Items.update({_id: id}, {$inc: {count: -1}});
+    if (Items.findOne({_id: id}).count === 0) {
+      Items.remove({_id: id});
+    };
+  }
+});

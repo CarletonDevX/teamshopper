@@ -7,3 +7,4 @@ Item
   part_number: String
   product_code: String
   name: String
+  count: Integer
