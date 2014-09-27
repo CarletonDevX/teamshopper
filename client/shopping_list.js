@@ -3,7 +3,8 @@ var getCurrentList = function () {
 }
 
 Template.ShoppingList.title = function () {
-  return (getCurrentList() || {'title': ''}).title;
+  var list = getCurrentList();
+  return list && list.title || null;
 }
 
 Template.ShoppingList.items = function () {
@@ -150,10 +151,20 @@ Template.ShoppingList.events({
   'click .addFriend': function () {
     $('.shoppingListContent').toggleClass('sidebarOpen');
   },
-  'click .listTitle': function () {
+  'focus .js-list-title-input': function () {
     var titleDisplay = $('.js-list-title-display');
+    var titleInput = $('.js-list-title-input');
+    titleInput.val(titleDisplay.text().trim());
     titleDisplay.hide();
-    $('.js-list-title-input').show().val(titleDisplay.val());
+    titleInput.show();
+  },
+  'blur .js-list-title-input': function () {
+    var titleDisplay = $('.js-list-title-display');
+    var titleInput = $('.js-list-title-input');
+    var title = titleInput.val().trim();
+    ShoppingLists.update(Session.get("listId"), {$set: {title: title}});
+    titleInput.val('');
+    titleDisplay.show();
   }
   // 'focus #search-bar': function () {
   //   if ($('.search-results').length > 0) {

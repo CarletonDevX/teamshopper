@@ -2,30 +2,32 @@
   <div class="shoppingListContent">
     <div style="display: none" id="data-id" data-id="{{id}}"></div>
 
-    <div class="list-title">
-      <a href="/home">&lsaquo;</a>
-      <span class="js-list-title-display">
-        {{title}}
-      </span>
-      <input class="js-list-title-input" type="text">
+    <div class="shoppingListHead">
+      <div class="list-title">
+        <a href="/home">&lsaquo;</a>
+        <span class="js-list-title-display">
+          {{title}}
+        </span>
+        <input class="js-list-title-input" type="text">
+      </div>
+
+      <div class="friendsSection">
+        <div class="friendsList">
+          <ul class="friendsSpaces">
+            {{#each friendSpaces}}<li></li>{{/each}}
+          </ul>
+          <ul class="friendsPhotos">
+            {{#each addedFriends}}<li><img src="{{pic}}"></li>{{/each}}
+          </ul>
+          <div class="addFriend"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="friendsSection">
-      <div class="friendsList">
-        <ul class="friendsSpaces">
-          {{#each friendSpaces}}<li></li>{{/each}}
-        </ul>
-        <ul class="friendsPhotos">
-          {{#each addedFriends}}<li><img src="{{pic}}"></li>{{/each}}
-        </ul>
-        <div class="addFriend"></div>
-      </div>
-
-      <div class="friendsSidebar">
-        <ul>
-        {{#each allFriends}}{{> FriendInSidebar}}{{/each}}
-        </ul>
-      </div>
+    <div class="friendsSidebar">
+      <ul>
+      {{#each allFriends}}{{> FriendInSidebar}}{{/each}}
+      </ul>
     </div>
 
     <div class="shoppingList">
@@ -51,4 +53,4 @@
 
 </template>
 
-<template name="FriendInSidebar"><li><img src="{{pic}}">{{name}}</li></template>
+<template name="FriendInSidebar"><li><img src="{{pic}}"><span class="friend-name">{{name}}</span></li></template>
