@@ -3,12 +3,18 @@
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+  <h1>Walrus</h1>
 
-  {{> hello}}
+  {{> shoppingList}}
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="shoppingList">
+  List 1:
+  <ul>
+    {{#each items}}
+    <li>{{name}}</li>
+    {{/each}}
+  </ul>
+  <input class="{{inputField}}" type="text">
+  <button class="{{inputSubmit}}"></button>
 </template>
