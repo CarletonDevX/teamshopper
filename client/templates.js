@@ -21,6 +21,11 @@ Template.Home.events({
 Template.ShoppingList.inputField = 'js-input';
 Template.ShoppingList.inputSubmit = 'js-submit';
 
+Template.ShoppingList.rendered(function () {
+  Session.set('listIndex', parseInt($('div#data-index').attr('data-index')));
+});
+
 Template.ShoppingList.items = function () {
-  return Items.find();
+  var list = ShoppingLists.findOne(Session.get('listIndex')) || {_id: null};
+  return Items.find({shopping_list_id: list._id});
 }
