@@ -15,6 +15,16 @@ Template.ShoppingList.friendSpaces = function () {
 }
 
 Template.ShoppingList.addedFriends = function () {
+  var allFriends = Session.get('friends');
+  if (allFriends) {
+    return allFriends.filter(function (friend) {
+      var fbAccount = FacebookAccounts.findOne({facebook_id: friend.id});
+      return fbAccount && getCurrentList().user_ids.indexOf(fbAccount.user_id) != -1;
+    });
+  }
+}
+
+Template.ShoppingList.allFriends = function () {
   return Session.get('friends');
 }
 
@@ -125,15 +135,30 @@ Template.ShoppingList.rendered = function () {
 };
 
 Template.ShoppingList.events({
-  'click #items-to-buy .up': function(){
+  'click #items-to-buy .up': function () {
     var id = $(this)[0]._id;
     Items.update({_id: id}, {$inc: {count: 1}});
   },
-  'click #items-to-buy .down': function(){
+  'click #items-to-buy .down': function () {
     var id = $(this)[0]._id;
     Items.update({_id: id}, {$inc: {count: -1}});
     if (Items.findOne({_id: id}).count === 0) {
       Items.remove({_id: id});
     };
+  },
+  'click .addFriend': function () {
+    $('.shoppingListContent').toggleClass('sidebarOpen');
+  }
+});
+
+Template.FriendInSidebar.events({
+  'click': function () {
+    var fbAccount = FacebookAccounts.findOne({facebook_id: this.id});
+    if (fbAccount) {
+      var listId = Session.get("listId");
+      if (ShoppingLists.findOne(listId).user_ids.indexOf(fbAccount.user_id) == -1) {
+        ShoppingLists.update(listId, {$push: {user_ids: fbAccount.user_id}});
+      }
+    }
   }
 });

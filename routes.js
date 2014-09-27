@@ -9,10 +9,23 @@ Router.configure({
 });
 
 var redirectIfNotLoggedIn = function () {
-  if (!Meteor.user()) {
+  var user = Meteor.user();
+  if (!user) {
     if (!Meteor.loggingIn()) {
       Router.go('Login');
     }
+  } else {
+    // If logged in, make sure we have a FacebookAccount for this user
+    MeteorFB.onReady(function () {
+      MeteorFB.getFacebookId(function (facebookId) {
+        if (!FacebookAccounts.findOne({facebook_id: facebookId})) {
+          FacebookAccounts.insert({
+            facebook_id: facebookId,
+            user_id: user._id
+          });
+        }
+      });
+    });
   }
 }
 

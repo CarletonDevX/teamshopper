@@ -3,6 +3,39 @@
   height: 40px;
   line-height: 40px;
 }
+.shoppingListContent {
+  position: relative;
+  left: 0;
+  -webkit-transition: left 500ms ease;
+     -moz-transition: left 500ms ease;
+       -o-transition: left 500ms ease;
+          transition: left 500ms ease;
+}
+.shoppingListContent.sidebarOpen {
+  left: -300px;
+}
+
+/* Friends sidebar */
+.friendsSection {
+  position: relative;
+}
+.friendsSidebar {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 300px;
+  background: #222;
+}
+.friendsSidebar li {
+  border-top: 1px solid #888;
+  height: 70px;
+}
+.friendsSidebar li:last-of-type {
+  border-bottom: 1px solid #888;
+}
+.friendsSidebar img {
+  width: 70px;
+}
 
 /* Friends added to the shopping list */
 .friendsList {
@@ -12,9 +45,6 @@
 
 }
 .friendsList ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
   max-width: 100%;
   position: absolute;
 }
@@ -50,6 +80,7 @@
   right: 0;
   background: grey;
   box-shadow: 0 0 5px 5px;
+  cursor: pointer;
 }
 
 /* Search */
@@ -74,11 +105,6 @@
 }
 
 /* Shopping list */
-.shoppingList ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
 .shoppingList li {
   padding: 15px;
   border-bottom: 1px solid #777;

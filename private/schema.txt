@@ -8,3 +8,6 @@ Item
   product_code: String
   name: String
   count: Integer
+FacebookAccount
+  facebook_id: String
+  user_id: ObjectId

@@ -5,6 +5,7 @@ if (Meteor.isServer) {
     Items.remove({});
     Groups.remove({});
     ShoppingLists.remove({});
+    FacebookAccounts.remove({});
   }
 
   Meteor.startup(function () {

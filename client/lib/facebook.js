@@ -15,18 +15,28 @@ window.fbAsyncInit = function() {
    fjs.parentNode.insertBefore(js, fjs);
  }(document, 'script', 'facebook-jssdk'));
 
-var readyCallback;
+var readyCallbacks = [];
+var isReady = false;
 
 MeteorFB = {
 
   ready: function () {
-    if (readyCallback) {
-      readyCallback();
+    isReady = true;
+    for (var i in readyCallbacks) {
+      readyCallbacks[i]();
     }
   },
 
   onReady: function (callback) {
-    readyCallback = callback;
+    if (isReady) callback();
+    else readyCallbacks.push(callback);
+  },
+
+  getFacebookId: function (callback) {
+    var accessToken = Meteor.user().services.facebook.accessToken;
+    FB.api("/me?access_token=" + accessToken, function (r) {
+      callback(r.id);
+    });
   },
 
   getFriends: function (callback) {
@@ -40,6 +50,7 @@ MeteorFB = {
       FB.api("/me/friends?access_token=" + accessToken, function (r) {
         var friends = r.data.map(function(friend) {
           return {
+            id: friend.id,
             name: friend.name,
             pic: picUrlFromId(friend.id)
           }
@@ -51,7 +62,7 @@ MeteorFB = {
       if (Meteor.user()) {
         getFriendData();
       } else {
-        Meteor.setTimeout(tryGetFriendData, 500);
+        Meteor.setTimeout(tryGetFriendData, 400);
       }
     }
     tryGetFriendData();

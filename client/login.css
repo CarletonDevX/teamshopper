@@ -1,20 +1,10 @@
-.outer {
-  display: table;
-  width: 100%;
-  height: 100%;
-}
-
-.inner {
-  display: table-cell;
-  vertical-align: middle;
-  width: 100%;
-  height: 100%;
-  background: #fee;
-}
-
 #login-buttons {
-  width: 100%;
   text-align: center;
+  top: 50%;
+  position: absolute;
+  left: 50%;
+  margin-left: -113px;
+  margin-top: 17px;
 }
 
 #login-buttons-facebook {

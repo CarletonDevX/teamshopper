@@ -1,24 +1,48 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:800italic);
+
 html {
   height: 100%;
 }
-
 body {
   background-color: white;
   padding: 0;
   margin: 0;
-  font-family: sans-serif;
+  font-family: "Open Sans";
   height: 100%;
 }
-
+.wrapper {
+  min-height: 100%;
+  position:relative;
+}
 .content {
-  height: 100%;
+  padding-bottom: 18px;
+  overflow: hidden;
 }
-
+.footer {
+  width: 100%;
+  height: 20px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: rgb(216, 31, 56);
+  color: white;
+  text-align: center;
+  font-size: 13px;
+}
 h1 {
   width: 100%;
   text-align: center;
-  background-color: #c00;
-  padding: 10px 0 5px;
+  background-color: rgb(216, 31, 56); /* #c00; */
+  padding: 8px 0;
   color: white;
+  margin: 0;
+  font-weight: 800;
+  font-style: italic;
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+ul {
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
