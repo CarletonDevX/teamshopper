@@ -30,11 +30,13 @@ Template.ShoppingList.rendered = function () {
     });
   }
 
-  function onClickItem (partNumber) {
+  function onClickItem (partNumber, name) {
     return function () {
       Items.insert({
-        shopping_list_id: 1,
-        name: partNumber
+        shopping_list_id: parseInt($('div#data-index').val()),
+        status: 'need',
+        part_number: partNumber,
+        name: name
       });
     }
   }
@@ -44,13 +46,13 @@ Template.ShoppingList.rendered = function () {
       $('.search-results li').remove();
       for (var i = 0; i < listOfResults.length; i++) {
         var searchResult = $('<li>' + listOfResults[i]['title'] + '</li>');
-        $(searchResult).click(onClickItem(listOfResults[i]['partNumber']));
+        $(searchResult).click(onClickItem(listOfResults[i]['partNumber'], listOfResults[i]['title']));
         $('#search-wrapper .search-results').append(searchResult);
       };
     }
   }
 
-  $('#input').keydown($.throttle(250, function (e) {
+  $('#search-bar').keydown($.throttle(250, function (e) {
     $('.search-results').remove();
     if(!$.inArray(e.keyCode,[13,16,17,18,19,20,27,35,36,37,38,39,40,91,93,224])){return;}
     var resultsList = $('#search-wrapper .search-results');
@@ -60,7 +62,7 @@ Template.ShoppingList.rendered = function () {
     } else {
       resultsList = resultsList[0];
     }
-    getTarget($('#input').val(), shoveToDOM(resultsList));
+    getTarget($('#search-bar').val(), shoveToDOM(resultsList));
   }));
 
 };

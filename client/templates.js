@@ -24,13 +24,3 @@ Template.ShoppingList.inputSubmit = 'js-submit';
 Template.ShoppingList.items = function () {
   return Items.find();
 }
-
-Template.ShoppingList.events({
-  'click .js-submit': function () {
-    var itemName = $('.js-input').val();
-    Items.insert({
-      shopping_list_id: 1,
-      name: itemName
-    });
-  },
-});
