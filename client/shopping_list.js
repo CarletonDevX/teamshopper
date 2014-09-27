@@ -1,4 +1,15 @@
+Template.ShoppingList.inputField = 'js-input';
+Template.ShoppingList.inputSubmit = 'js-submit';
+
+Template.ShoppingList.items = function () {
+  var list = ShoppingLists.findOne({index: Session.get('listIndex')}) || {_id: null};
+  return Items.find({shopping_list_id: list._id});
+}
+
 Template.ShoppingList.rendered = function () {
+
+  var listIndex = parseInt($('div#data-index').attr('data-index'));
+  Session.set('listIndex', listIndex);
 
   function getTarget (text, callback) {
     if (text.trim() === '') {
@@ -32,7 +43,7 @@ Template.ShoppingList.rendered = function () {
 
   function onClickItem (partNumber, name) {
     return function () {
-      var list = ShoppingLists.findOne({index: parseInt($('div#data-index').val())});
+      var list = ShoppingLists.findOne({index: listIndex});
       Items.insert({
         shopping_list_id: list._id,
         status: 'need',
