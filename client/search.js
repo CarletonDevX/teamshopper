@@ -32,9 +32,9 @@ Template.ShoppingList.rendered = function () {
 
   function onClickItem (partNumber, name) {
     return function () {
-      var idx = parseInt($('div#data-index').attr('data-index'));
+      var list = ShoppingLists.findOne({index: parseInt($('div#data-index').val())});
       Items.insert({
-        shopping_list_id: ShoppingLists.findOne({index: idx})._id,
+        shopping_list_id: list._id,
         status: 'need',
         part_number: partNumber,
         name: name

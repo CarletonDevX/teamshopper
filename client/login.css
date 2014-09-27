@@ -13,6 +13,7 @@
 }
 
 .fb-login {
+  display: block;
   position: relative;
   top: -25px;
   width: 70%;
@@ -22,4 +23,5 @@
   line-height: 50px;
   text-align: center;
   background: #5af;
+  cursor: pointer;
 }
