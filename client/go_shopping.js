@@ -6,6 +6,20 @@ Template.GoShopping.title = function () {
   return (getCurrentList() || {'title': ''}).title;
 }
 
+Template.GoShopping.dismahshit = function () {
+  var cl = getCurrentList();
+  if (cl) {
+    var itms = Items.find({shopping_list_id: Session.get('listId')}).fetch();
+    var accu = 0;
+    for (var i = 0; i < itms.length; i++) {
+      accu += parseInt(itms[i].price * itms[i].count);
+    };
+    return parseInt(accu * 0.5);
+  } else {
+    return 15;
+  }
+}
+
 Template.GoShopping.rendered = function () {
 
   var listId = $('div#data-id-more').attr('data-id');

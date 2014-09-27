@@ -67,9 +67,10 @@ Template.ShoppingList.rendered = function () {
           return {
             partNumber: x.partNumber,
             productCode: x.DPCI,
-            title: x.ItemAttributes[0].Attribute[0].description
+            title: x.ItemAttributes[0].Attribute[0].description,
           };
         })
+        console.log(newList);
         return callback(newList);
       },
       error: function (xhr, status, error) {
@@ -83,10 +84,10 @@ Template.ShoppingList.rendered = function () {
     return function () {
       $('.search-results').remove();
       $('#search-bar').val('');
-      var list = getCurrentList();
+      var price = Math.floor(Math.random() * 11) + 2;
       var select = {
         part_number: partNumber,
-        shopping_list_id: list._id,
+        shopping_list_id: Session.get('listId'),
         product_code: productCode
       };
       var oldObj = Items.findOne(select);
@@ -96,7 +97,8 @@ Template.ShoppingList.rendered = function () {
           {
             $set: {
               status: 'need',
-              name: name
+              name: name,
+              price: price
             },
             $inc: {
               count: 1
@@ -107,6 +109,7 @@ Template.ShoppingList.rendered = function () {
         select.status = 'need';
         select.name = name;
         select.count = 1;
+        select.price = price;
         Items.insert(select);
       }
     }
